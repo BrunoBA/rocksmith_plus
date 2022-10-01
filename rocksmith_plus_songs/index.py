@@ -1,22 +1,36 @@
 
 import json
-
+from selenium.common.exceptions import TimeoutException
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 from string import ascii_lowercase as alc
 from rocksmith_plus_songs.pages.ArtistPage import ArtistPage
+from selenium.webdriver.chrome.service import Service
+from pyvirtualdisplay import Display
 
+display = Display(visible=0, size=(800, 600))
+display.start()
 
 options = Options()
 options.add_argument("--window-size=1920x1080")
 options.add_argument("--verbose")
+options.add_argument("--headless") # if you want it headless
+options.add_argument('--no-sandbox')
+options.add_argument("--enable-automation")
+options.add_argument('--disable-gpu')
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
-driver.get("https://www.ubisoft.com/en-us/game/rocksmith/plus/song-library/search/artists/symbol/1")
+options.BinaryLocation = ("/usr/bin/chromium-browser")
+service = Service("/usr/bin/chromedriver")
+
+driver = webdriver.Chrome(service=service, options=options)
+try:
+    driver.get("https://www.ubisoft.com/en-us/game/rocksmith/plus/song-library/search/artists/symbol/1")
+except TimeoutException as ex:
+   print(ex.Message)
+   driver.navigate().refresh()
 
 try:
     wait = WebDriverWait(driver, 3)
