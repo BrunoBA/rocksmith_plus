@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-import time
 
 class ArtistPage:
     def __init__(self, letter, driver):
@@ -20,9 +19,18 @@ class ArtistPage:
     def get_artists(self):
         return self.artists
 
+    def element_exists(self, css_selector, timeout=5):
+        try:
+            wait = WebDriverWait(self.driver, timeout)
+            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
+
+            return True
+        except:
+            return False
+
     def fetch_artists(self):
         artists = []
-        time.sleep(3)
+        self.element_exists('span.overflow-hidden')
         elements = self.driver.find_elements(By.CSS_SELECTOR, 'span.overflow-hidden')
         for element in elements:
             artists.append(element.text)
@@ -31,7 +39,7 @@ class ArtistPage:
 
     def next_page(self):
         try:
-            wait = WebDriverWait(self.driver, 2)
+            wait = WebDriverWait(self.driver, 10)
             myElem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#redirected-pagination > div > a.pagination-button.pagination-next")))
             myElem.click()
 
