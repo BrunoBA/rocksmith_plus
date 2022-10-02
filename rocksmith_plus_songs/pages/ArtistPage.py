@@ -12,7 +12,6 @@ class ArtistPage:
         while (res):
             res = self.next_page()
             artists = self.fetch_artists()
-            print(artists)
 
             self.artists = self.artists + artists
 
@@ -30,7 +29,10 @@ class ArtistPage:
 
     def fetch_artists(self):
         artists = []
-        self.element_exists('span.overflow-hidden')
+
+        if (not self.element_exists('span.overflow-hidden')):
+            return []
+
         elements = self.driver.find_elements(By.CSS_SELECTOR, 'span.overflow-hidden')
         for element in elements:
             artists.append(element.text)
@@ -46,4 +48,3 @@ class ArtistPage:
             return True
         except:
             return False
-        
