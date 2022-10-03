@@ -1,70 +1,72 @@
-#encoding: utf-8
+# encoding: utf-8
 
 import logging
 import datetime
+import time
+
 from selenium.common.exceptions import TimeoutException
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from string import ascii_lowercase as alc
 from rocksmith_plus_songs.pages.ArtistPage import ArtistPage
-from selenium.webdriver.chrome.service import Service
-from pyvirtualdisplay import Display
-
-
-logging.basicConfig(filename="log.txt", level=logging.INFO, format="%(asctime)s %(message)s")
-display = Display(visible=0, size=(800, 600))
-display.start()
-
-options = Options()
-options.add_argument("--window-size=1920x1080")
-options.add_argument("--verbose")
-options.add_argument("--headless") # if you want it headless
-options.add_argument('--no-sandbox')
-options.add_argument("--enable-automation")
-options.add_argument('--disable-gpu')
+from rocksmith_plus_songs.Driver import Driver
+from rocksmith_plus_songs.pages.PagesUrl import PagesUrl
 
 start_date = datetime.datetime.now()
+logging.basicConfig(filename="log.txt", level=logging.INFO, format="%(asctime)s %(message)s")
 
-#driver = webdriver.Chrome(ChromeDriverManager().install())
-options.BinaryLocation = ("/usr/bin/chromium-browser")
-#service = Service("/home/admin/chromedriver_linux")
-#service = Service("/usr/bin/chromedriver")
-service = Service("/usr/bin/chromedriver")
+driver = Driver().get_driver()
 
-driver = webdriver.Chrome(service=service, options=options)
 try:
     driver.get("https://www.ubisoft.com/en-us/game/rocksmith/plus/song-library/search/artists/symbol/1")
 except TimeoutException as ex:
-   print(ex.Message)
-   driver.navigate().refresh()
+    driver.navigate().refresh()
 
 try:
-    wait = WebDriverWait(driver, 7)
+    wait = WebDriverWait(driver, 20)
     cookies_consent = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#privacy__modal__close")))
     cookies_consent.click()
 except:
     pass
 
-
+letters = PagesUrl().get_letters()
 artists = []
-for letter in alc:
+expected = 0
+for letter in letters:
     page = ArtistPage(letter, driver)
-    artists = artists + page.get_artists()
 
     try:
-        wait = WebDriverWait(driver, 7)
-        myElem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#artists-by-letter-results > h3')))
-    except:
+        wait = WebDriverWait(driver, 10)
+        my_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#artists-by-letter-results > h3')))
+
+        quantity_of_artists = my_element.text.split("of")[1].strip()
+        print(f"- Artists from {letter.upper()}: ({quantity_of_artists})")
+    except Exception as error:
+        quantity_of_artists = 0
+        print(error)
+        print(f"---------------- Error to load {letter}")
         pass
+
+    expected = expected + int(quantity_of_artists)
+
+    next_page = True
+    while next_page:
+        time.sleep(5)
+
+        page.fetch_artists()
+        next_page = page.next_page()
+
+    loaded_art = page.get_artists()
+    artists = artists + loaded_art
+    print(len(loaded_art), quantity_of_artists)
 
 qtd_artists = len(artists)
 end_date = datetime.datetime.now()
 
 delta = end_date - start_date
 
-logging.info(f"Artists: {qtd_artists} Time: {delta}")
+logging.info(f"Artists: {qtd_artists} Expected: {expected} Time: {delta}")
 
 driver.close()
+
+#print(artists)

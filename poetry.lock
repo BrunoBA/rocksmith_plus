@@ -207,6 +207,14 @@ python-versions = ">=3.7"
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "pyvirtualdisplay"
+version = "3.0"
+description = "python wrapper for Xvfb, Xephyr and Xvnc"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -360,7 +368,7 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "10bbb918afd7c11b0b53073d437b9e7b4564572558e8bda98c09877d9c159934"
+content-hash = "1d086e412a7cc89a51f3d1ee114d84b35ecdd77e92a2917e9a76eec0b3c647a6"
 
 [metadata.files]
 async-generator = []
@@ -401,6 +409,7 @@ pytest = [
     {file = "pytest-5.4.3.tar.gz", hash = "sha256:7979331bfcba207414f5e1263b5a0f8f521d0f457318836a7355531ed1a4c7d8"},
 ]
 python-dotenv = []
+pyvirtualdisplay = []
 requests = []
 selenium = []
 sniffio = []

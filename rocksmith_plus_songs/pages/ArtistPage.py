@@ -8,12 +8,14 @@ class ArtistPage:
         self.driver = driver
         driver.get(f"https://www.ubisoft.com/en-us/game/rocksmith/plus/song-library/search/artists/{letter}/1")
 
-        res = True
-        while (res):
-            res = self.next_page()
-            artists = self.fetch_artists()
+    def insert_artist(self, artist):
+        if artist in self.artists:
+            return
+        self.artists.append(artist)
 
-            self.artists = self.artists + artists
+    # def load_artists(self):
+    #     artists = self.fetch_artists()
+    #     self.insert_artists(artists)
 
     def get_artists(self):
         return self.artists
@@ -28,23 +30,20 @@ class ArtistPage:
             return False
 
     def fetch_artists(self):
-        artists = []
-
-        if (not self.element_exists('span.overflow-hidden')):
+        if not self.element_exists('span.overflow-hidden', 10):
             return []
 
         elements = self.driver.find_elements(By.CSS_SELECTOR, 'span.overflow-hidden')
         for element in elements:
-            artists.append(element.text)
-
-        return artists
+            self.insert_artist(element.text)
 
     def next_page(self):
-        try:
-            wait = WebDriverWait(self.driver, 10)
-            myElem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#redirected-pagination > div > a.pagination-button.pagination-next")))
-            myElem.click()
-
-            return True
-        except:
+        next_page_id = "#redirected-pagination > div > a.pagination-button.pagination-next"
+        if not self.element_exists(next_page_id):
             return False
+
+        wait = WebDriverWait(self.driver, 10)
+        next_page = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, next_page_id)))
+        next_page.click()
+
+        return True
