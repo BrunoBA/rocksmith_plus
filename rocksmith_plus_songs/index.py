@@ -14,6 +14,7 @@ from rocksmith_plus_songs.pages.PagesUrl import PagesUrl
 
 start_date = datetime.datetime.now()
 logging.basicConfig(filename="log.txt", level=logging.INFO, format="%(asctime)s %(message)s")
+logging.info(f"Started {start_date.strftime('%Y-%m-%d %H:%M:%S')}")
 
 driver = Driver().get_driver()
 
@@ -40,11 +41,9 @@ for letter in letters:
         my_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#artists-by-letter-results > h3')))
 
         quantity_of_artists = my_element.text.split("of")[1].strip()
-        print(f"- Artists from {letter.upper()}: ({quantity_of_artists})")
     except Exception as error:
         quantity_of_artists = 0
-        print(error)
-        print(f"---------------- Error to load {letter}")
+        logging.info(f"---------------- Error to load {letter}")
         pass
 
     expected = expected + int(quantity_of_artists)
@@ -58,7 +57,7 @@ for letter in letters:
 
     loaded_art = page.get_artists()
     artists = artists + loaded_art
-    print(len(loaded_art), quantity_of_artists)
+    logging.info(f"- Artists from {letter.upper()}: Expected ({quantity_of_artists}) Loaded: {len(loaded_art)}")
 
 qtd_artists = len(artists)
 end_date = datetime.datetime.now()
@@ -69,4 +68,3 @@ logging.info(f"Artists: {qtd_artists} Expected: {expected} Time: {delta}")
 
 driver.close()
 
-#print(artists)
