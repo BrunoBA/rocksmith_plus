@@ -2,7 +2,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-class ArtistPage:
+
+class LetterPage:
     def __init__(self, letter, driver):
         self.artists = []
         self.driver = driver
@@ -28,6 +29,9 @@ class ArtistPage:
             return True
         except:
             return False
+
+    def fetch_songs(self, artist_url):
+        print(artist_url)
 
     def fetch_artists(self):
         if not self.element_exists('span.overflow-hidden', 10):

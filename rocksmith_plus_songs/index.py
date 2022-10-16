@@ -8,9 +8,10 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from rocksmith_plus_songs.pages.ArtistPage import ArtistPage
+from rocksmith_plus_songs.pages.LetterPage import LetterPage
 from rocksmith_plus_songs.Driver import Driver
 from rocksmith_plus_songs.pages.PagesUrl import PagesUrl
+from bba_playlist.Artist import Artist
 
 start_date = datetime.datetime.now()
 logging.basicConfig(filename="log.txt", level=logging.INFO, format="%(asctime)s %(message)s")
@@ -34,7 +35,7 @@ letters = PagesUrl().get_letters()
 artists = []
 expected = 0
 for letter in letters:
-    page = ArtistPage(letter, driver)
+    page = LetterPage(letter, driver)
 
     try:
         wait = WebDriverWait(driver, 10)
