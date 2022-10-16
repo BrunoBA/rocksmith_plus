@@ -1,53 +1,53 @@
+from rocksmith_plus_songs.pages.RocksmithPage import RocksmithPage
+from rocksmith_plus_songs.pages.ArtistPage import ArtistPage
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from bba_playlist.Artist import Artist
 
 
-class LetterPage:
+class LetterPage(RocksmithPage):
     def __init__(self, letter, driver):
-        self.artists = []
-        self.driver = driver
-        driver.get(f"https://www.ubisoft.com/en-us/game/rocksmith/plus/song-library/search/artists/{letter}/1")
+        url = f"https://www.ubisoft.com/en-us/game/rocksmith/plus/song-library/search/artists/{letter}/1"
+        super().__init__(url, driver)
+        self.artist_page = None
+        self.urls = []
 
-    def insert_artist(self, artist):
-        if artist in self.artists:
-            return
-        self.artists.append(artist)
-
-    # def load_artists(self):
-    #     artists = self.fetch_artists()
-    #     self.insert_artists(artists)
+    def get_urls(self):
+        return self.urls
 
     def get_artists(self):
-        return self.artists
+        return self.data
 
-    def element_exists(self, css_selector, timeout=5):
-        try:
-            wait = WebDriverWait(self.driver, timeout)
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
+    def fetch_data(self):
+        target = self.get_target()
 
-            return True
-        except:
-            return False
-
-    def fetch_songs(self, artist_url):
-        print(artist_url)
-
-    def fetch_artists(self):
-        if not self.element_exists('span.overflow-hidden', 10):
+        if not self.element_exists(target, 10):
             return []
 
-        elements = self.driver.find_elements(By.CSS_SELECTOR, 'span.overflow-hidden')
-        for element in elements:
-            self.insert_artist(element.text)
+        urls = self.query_selector_all('a.d-block.text.text-decoration-none')
+        elements = self.driver.find_elements(By.CSS_SELECTOR, target)
+        for index, element in enumerate(elements):
+            self.insert_data(element.text)
+            self.urls.append(urls[index].get_attribute('href'))
 
-    def next_page(self):
-        next_page_id = "#redirected-pagination > div > a.pagination-button.pagination-next"
-        if not self.element_exists(next_page_id):
-            return False
+    def insert_songs_to_artist(self, artist, songs):
+        for song in songs:
+            artist.add_song(song.strip())
 
-        wait = WebDriverWait(self.driver, 10)
-        next_page = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, next_page_id)))
-        next_page.click()
+        return artist
 
-        return True
+    def fetch_artists_songs(self):
+        artists = []
+        for index, url in enumerate(self.urls):
+            artist_page = ArtistPage(url, self.driver)
+
+            next_page = True
+            while next_page:
+                artist_page.fetch_data()
+                next_page = artist_page.next_page()
+
+            artist = Artist(self.data[index])
+            self.insert_songs_to_artist(artist, artist_page.get_data())
+
+            artists.append(artist)
+
+        return artists

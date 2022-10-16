@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from rocksmith_plus_songs.pages.LetterPage import LetterPage
 from rocksmith_plus_songs.Driver import Driver
 from rocksmith_plus_songs.pages.PagesUrl import PagesUrl
-from bba_playlist.Artist import Artist
+from bba_playlist.Soundtrack import Soundtrack
 
 start_date = datetime.datetime.now()
 logging.basicConfig(filename="log.txt", level=logging.INFO, format="%(asctime)s %(message)s")
@@ -31,6 +31,7 @@ try:
 except:
     pass
 
+soundtrack = Soundtrack()
 letters = PagesUrl().get_letters()
 artists = []
 expected = 0
@@ -53,12 +54,18 @@ for letter in letters:
     while next_page:
         time.sleep(5)
 
-        page.fetch_artists()
+        page.fetch_data()
         next_page = page.next_page()
 
     loaded_art = page.get_artists()
     artists = artists + loaded_art
     logging.info(f"- Artists from {letter.upper()}: Expected ({quantity_of_artists}) Loaded: {len(loaded_art)}")
+
+    for art in page.fetch_artists_songs():
+        soundtrack.add_artist(art)
+
+print(soundtrack.toJSON())
+
 
 qtd_artists = len(artists)
 end_date = datetime.datetime.now()

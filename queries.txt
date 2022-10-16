@@ -1,0 +1,16 @@
+// To get the URL
+document.querySelectorAll("a.d-block.text.text-decoration-none") // To get the url
+
+// To get artist name
+document.querySelectorAll("div.d-flex.marquee-container.table-text-bold > span").forEach(s => console.log(s))
+
+
+// To get song name
+document.querySelectorAll("div.d-flex.marquee-container.ml-4.mr-3.table-text-bold > span").forEach(s => console.log(s))
+
+
+selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element <a data-v-150a6727="" href="/en-us/game/rocksmith/plus/song-library/search/artists/a/2" class="pagination-button pagination-next"></a> is not clickable at point (917, 876). Other element would receive the click: <div id="overlay-backdrop" style="z-index: 999;"></div>
+  (Session info: chrome=106.0.5249.119)
+
+
+a.pagination-number-button.router-link-exact-active.router-link-active.pagination-number-button-active
