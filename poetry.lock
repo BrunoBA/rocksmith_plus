@@ -29,6 +29,14 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
+name = "bba-playlist"
+version = "0.1.0"
+description = ""
+category = "main"
+optional = false
+python-versions = ">=3.9,<4.0"
+
+[[package]]
 name = "beautifulsoup4"
 version = "4.11.1"
 description = "Screen-scraping library"
@@ -368,12 +376,13 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "1d086e412a7cc89a51f3d1ee114d84b35ecdd77e92a2917e9a76eec0b3c647a6"
+content-hash = "fcc6be6b35372450c8b6329eb50fcdf44ca8ca36f39875d14893165fe9c0b872"
 
 [metadata.files]
 async-generator = []
 atomicwrites = []
 attrs = []
+bba-playlist = []
 beautifulsoup4 = []
 certifi = []
 cffi = []
